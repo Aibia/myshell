@@ -7,19 +7,15 @@
 #include <sys/wait.h>
 #include <pwd.h>
 #include <unistd.h>
-<<<<<<< HEAD
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <dirent.h>
-=======
->>>>>>> 77b70a2c5a8e04ba84435cd915fe5a04ad6e7dae
 
 #define MAX_LEN_LINE    40
 #define LEN_HOSTNAME    30
 #define LEN_CURRDIR     250
 #define DELIM_CHARS    " ;"
 
-<<<<<<< HEAD
 void ls_Inode(struct stat buf){
 	printf("%d    ", (unsigned int)buf.st_ino);
 }
@@ -46,8 +42,6 @@ void ls_option(struct stat buf, char *option){
 int ls(char *argv);
 // show files and directories in current directory
 
-=======
->>>>>>> 77b70a2c5a8e04ba84435cd915fe5a04ad6e7dae
 int main(void)
 {
     char command[MAX_LEN_LINE];
@@ -81,7 +75,6 @@ int main(void)
 		if (command[len - 1] == '\n') {
             command[len - 1] = '\0'; 
         }
-<<<<<<< HEAD
 		if (!strcmp(command, "exit")){
 			return 0;
 		}
@@ -89,14 +82,6 @@ int main(void)
 			ls(command);
 		}
 
-=======
-        
-		if (!strcmp(command, "exit")){
-			return 0;
-		}
-        
-		printf("[%s]\n", command);
->>>>>>> 77b70a2c5a8e04ba84435cd915fe5a04ad6e7dae
 		ret_ptr = strtok_r(command, DELIM_CHARS, &next_ptr);
 
 		while (ret_ptr){
@@ -129,7 +114,6 @@ int main(void)
     }
 	return 0;
 }
-<<<<<<< HEAD
 
 int ls(char *argv){
 	char *cwd = (char *)malloc(sizeof(char)* 1024);
@@ -166,5 +150,3 @@ int ls(char *argv){
 
 	return 0;
 }
-=======
->>>>>>> 77b70a2c5a8e04ba84435cd915fe5a04ad6e7dae
