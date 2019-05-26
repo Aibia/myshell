@@ -81,6 +81,11 @@ int main(void)
 		if (!strncmp(command, "ls", 2)){
 			ls(command+2);
 		}
+		// ls를 입력받은 경우 option에 따라 현재 디렉토리, 파일들의 권한, 사이즈, 내용 출력
+		if (!strcmp(command, "pwd")){
+			printf("%s\n", currDir);
+		}
+		// pwd를 입력받은 경우 현재 경로 출력
 
 		ret_ptr = strtok_r(command, DELIM_CHARS, &next_ptr);
 
