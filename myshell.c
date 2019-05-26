@@ -21,11 +21,11 @@ void ls_Inode(struct stat buf){
 }
 
 void ls_Mode(struct stat buf){
-	printf("%o    ", (unsigned int)buf.st_mode);
+	printf("%lo    ", (unsigned long)buf.st_mode);
 }
 
 void ls_FSize(struct stat buf){
-	printf("%d    ", (int)buf.st_size);
+	printf("%ld    ", buf.st_size);
 }
 
 void ls_option(struct stat buf, char *option){
@@ -39,7 +39,7 @@ void ls_option(struct stat buf, char *option){
 	}
 }
 
-int ls(char *argv);
+int ls(char *arg);
 // show files and directories in current directory
 
 int main(void)
@@ -79,7 +79,7 @@ int main(void)
 			return 0;
 		}
 		if (!strncmp(command, "ls", 2)){
-			ls(command);
+			ls(command+2);
 		}
 
 		ret_ptr = strtok_r(command, DELIM_CHARS, &next_ptr);
@@ -115,7 +115,7 @@ int main(void)
 	return 0;
 }
 
-int ls(char *argv){
+int ls(char *arg){
 	char *cwd = (char *)malloc(sizeof(char)* 1024);
 	memset(cwd, 0, 1024);
 
@@ -139,8 +139,8 @@ int ls(char *argv){
 			printf("DIR  ");
 		else
 			printf("???  ");
-		if (strlen(argv) > 1)
-			ls_option (buf, (argv+1));
+		if (strlen(arg) > 1)
+			ls_option (buf, (arg+1));
 		
 		printf("%s \n", entry->d_name);
 	}
