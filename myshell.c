@@ -10,37 +10,20 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <grp.h>
+#include <time.h>
 
 #define MAX_LEN_LINE    40
 #define LEN_HOSTNAME    30
 #define LEN_CURRDIR     250
 #define DELIM_CHARS    " ;"
 
-void ls_Inode(struct stat buf){
-	printf("%d    ", (unsigned int)buf.st_ino);
-}
-
-void ls_Mode(struct stat buf){
-	printf("%lo    ", (unsigned long)buf.st_mode);
-}
-
-void ls_FSize(struct stat buf){
-	printf("%ld    ", buf.st_size);
-}
-
-void ls_option(struct stat buf, char *option){
-	if(strcmp(option, "-l")==0){
-		ls_Mode(buf);
-		ls_Inode(buf);
-		ls_FSize(buf);
-	}
-	else if(strcmp(option, "-i")==0){
-		ls_Inode(buf);
-	}
-}
+void rwx(mode_t file_mode);
 
 int ls(char *arg);
 // show files and directories in current directory
+
+void ls_option(struct stat buf, char *option);
 
 int main(void)
 {
@@ -138,12 +121,6 @@ int ls(char *arg){
 	while ((entry = readdir(dir)) != NULL){
 		lstat(entry->d_name, &buf);
 		
-		if (S_ISREG(buf.st_mode))
-			printf("FILE ");
-		else if(S_ISDIR(buf.st_mode))
-			printf("DIR  ");
-		else
-			printf("???  ");
 		if (strlen(arg) > 1)
 			ls_option (buf, (arg+1));
 		
@@ -154,4 +131,94 @@ int ls(char *arg){
 	closedir(dir);
 
 	return 0;
+}
+
+void rwx(mode_t file_mode){
+    //파일의 종류와 접근권한 표시
+	if (S_ISDIR(file_mode)){
+        printf("d");
+    }
+    else
+        printf("-");
+
+    if (file_mode & S_IRUSR){
+        printf("r");
+    }
+    else
+        printf("-");
+    
+    if (file_mode & S_IWUSR){
+        printf("w");
+    }
+    else
+        printf("-");
+    
+    if (file_mode & S_IXUSR){
+        printf("x");
+    }
+    else
+        printf("-"); 
+    
+    if (file_mode & S_IRGRP){
+        printf("r");
+    }
+    else
+        printf("-");
+    
+    if (file_mode & S_IWGRP){
+        printf("w");
+    }
+    else
+        printf("-");
+    
+    if(file_mode & S_IXGRP){
+        printf("x");
+    }
+    else
+        printf("-"); 
+    
+    if (file_mode & S_IROTH){
+        printf("r");
+    }
+    else
+        printf("-");
+    
+    if (file_mode & S_IWOTH){
+        printf("w");
+    }
+    else
+        printf("-");
+    
+    if(file_mode & S_IXOTH){
+        printf("x");
+    }
+    else
+        printf("-");
+
+    printf(" ");
+}
+
+void ls_option(struct stat buf, char *option){
+	char time_str[26];
+
+    if(strcmp(option, "-l")==0){
+		rwx(buf.st_mode);
+        printf(" %ld  ", buf.st_nlink);
+        //링크 수 출력
+        printf("%s", getpwuid(getuid())->pw_name);
+        //소유자 출력
+        printf("  %s  ", getgrgid(getgid())->gr_name);
+		//group 출력
+        printf("%ld  ", buf.st_size); 
+        //크기 출력
+        ctime_r(&buf.st_mtime, time_str);
+        if (time_str[24] == '\n') {
+            time_str[24] = '\0'; 
+        }
+        printf("%s    ", time_str);
+        //수정된 시간 출력
+	}
+	else if(strcmp(option, "-i")==0){
+	    printf("%d    ", (unsigned int)buf.st_ino);
+	}
 }
